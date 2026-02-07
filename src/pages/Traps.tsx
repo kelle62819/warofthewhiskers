@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTraps } from '../hooks/useTraps';
 import { useEliminations } from '../hooks/useEliminations';
+import { useAdmin } from '../contexts/AdminContext';
 import TrapForm from '../components/traps/TrapForm';
 import TrapCard from '../components/traps/TrapCard';
 import TrapLeaderboard from '../components/traps/TrapLeaderboard';
@@ -8,6 +9,7 @@ import TrapLeaderboard from '../components/traps/TrapLeaderboard';
 export default function Traps() {
   const { traps, loading: trapsLoading } = useTraps();
   const { eliminations, loading: elimLoading } = useEliminations();
+  const { isAdmin } = useAdmin();
   const [showForm, setShowForm] = useState(false);
 
   const loading = trapsLoading || elimLoading;
@@ -18,15 +20,17 @@ export default function Traps() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="font-[family-name:var(--font-stencil)] text-2xl text-war-red">Arsenal</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-war-red hover:bg-war-red-glow text-white px-4 py-2 rounded text-sm font-semibold transition-colors"
-        >
-          {showForm ? 'Cancel' : '+ Deploy Trap'}
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-war-red hover:bg-war-red-glow text-white px-4 py-2 rounded text-sm font-semibold transition-colors"
+          >
+            {showForm ? 'Cancel' : '+ Deploy Trap'}
+          </button>
+        )}
       </div>
 
-      {showForm && <TrapForm onClose={() => setShowForm(false)} />}
+      {isAdmin && showForm && <TrapForm onClose={() => setShowForm(false)} />}
 
       {loading ? (
         <p className="text-war-text-dim text-center py-8">Loading arsenal...</p>

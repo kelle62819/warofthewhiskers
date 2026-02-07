@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import type { Post } from '../../types';
 import { deletePost } from '../../services/posts';
+import { useAdmin } from '../../contexts/AdminContext';
 
 export default function PostCard({ post }: { post: Post }) {
+  const { isAdmin } = useAdmin();
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   async function handleDelete() {
@@ -25,28 +27,32 @@ export default function PostCard({ post }: { post: Post }) {
           <span className="text-war-text-dim text-xs">
             {format(post.timestamp, 'MMM d, yyyy h:mm a')}
           </span>
-          {!confirmDelete ? (
-            <button
-              onClick={() => setConfirmDelete(true)}
-              className="text-war-text-dim hover:text-war-red text-xs transition-colors"
-            >
-              Delete
-            </button>
-          ) : (
-            <div className="flex gap-2">
-              <button
-                onClick={handleDelete}
-                className="text-war-red text-xs font-semibold"
-              >
-                Confirm
-              </button>
-              <button
-                onClick={() => setConfirmDelete(false)}
-                className="text-war-text-dim text-xs"
-              >
-                Cancel
-              </button>
-            </div>
+          {isAdmin && (
+            <>
+              {!confirmDelete ? (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="text-war-text-dim hover:text-war-red text-xs transition-colors"
+                >
+                  Delete
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleDelete}
+                    className="text-war-red text-xs font-semibold"
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="text-war-text-dim text-xs"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

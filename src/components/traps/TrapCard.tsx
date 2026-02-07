@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import type { Trap, Elimination } from '../../types';
 import { updateTrap, deleteTrap } from '../../services/traps';
 import { TRAP_TYPES } from '../../utils/constants';
+import { useAdmin } from '../../contexts/AdminContext';
 import LogEliminationForm from './LogEliminationForm';
 
 export default function TrapCard({
@@ -12,6 +13,7 @@ export default function TrapCard({
   trap: Trap;
   eliminations: Elimination[];
 }) {
+  const { isAdmin } = useAdmin();
   const [showLogForm, setShowLogForm] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -60,46 +62,48 @@ export default function TrapCard({
         {trap.notes && <span>{trap.notes}</span>}
       </div>
 
-      <div className="flex gap-2 mt-3">
-        {trap.isActive && (
-          <button
-            onClick={() => setShowLogForm(!showLogForm)}
-            className="bg-war-red/20 hover:bg-war-red/30 text-war-red px-3 py-1.5 rounded text-xs font-semibold transition-colors"
-          >
-            <img src="/mouse-icon.png" alt="" className="w-4 h-4 inline-block mr-1" />
-            Log Kill
-          </button>
-        )}
-        <button
-          onClick={handleToggleActive}
-          className="text-war-text-dim hover:text-war-text px-3 py-1.5 rounded text-xs transition-colors"
-        >
-          {trap.isActive ? 'Deactivate' : 'Reactivate'}
-        </button>
-        {!confirmDelete ? (
-          <button
-            onClick={() => setConfirmDelete(true)}
-            className="text-war-text-dim hover:text-war-red px-3 py-1.5 rounded text-xs transition-colors ml-auto"
-          >
-            Delete
-          </button>
-        ) : (
-          <div className="flex gap-1 ml-auto">
+      {isAdmin && (
+        <div className="flex gap-2 mt-3">
+          {trap.isActive && (
             <button
-              onClick={handleDelete}
-              className="text-war-red px-2 py-1.5 rounded text-xs font-semibold"
+              onClick={() => setShowLogForm(!showLogForm)}
+              className="bg-war-red/20 hover:bg-war-red/30 text-war-red px-3 py-1.5 rounded text-xs font-semibold transition-colors"
             >
-              Confirm
+              <img src="/mouse-icon.png" alt="" className="w-4 h-4 inline-block mr-1" />
+              Log Kill
             </button>
+          )}
+          <button
+            onClick={handleToggleActive}
+            className="text-war-text-dim hover:text-war-text px-3 py-1.5 rounded text-xs transition-colors"
+          >
+            {trap.isActive ? 'Deactivate' : 'Reactivate'}
+          </button>
+          {!confirmDelete ? (
             <button
-              onClick={() => setConfirmDelete(false)}
-              className="text-war-text-dim px-2 py-1.5 rounded text-xs"
+              onClick={() => setConfirmDelete(true)}
+              className="text-war-text-dim hover:text-war-red px-3 py-1.5 rounded text-xs transition-colors ml-auto"
             >
-              Cancel
+              Delete
             </button>
-          </div>
-        )}
-      </div>
+          ) : (
+            <div className="flex gap-1 ml-auto">
+              <button
+                onClick={handleDelete}
+                className="text-war-red px-2 py-1.5 rounded text-xs font-semibold"
+              >
+                Confirm
+              </button>
+              <button
+                onClick={() => setConfirmDelete(false)}
+                className="text-war-text-dim px-2 py-1.5 rounded text-xs"
+              >
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {showLogForm && (
         <LogEliminationForm trapId={trap.id} onClose={() => setShowLogForm(false)} />

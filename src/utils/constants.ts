@@ -1,3 +1,5 @@
+export const ADMIN_PASSCODE = 'siege2026';
+
 export const CAMPAIGN_START_DATE = new Date('2026-02-08');
 export const CAMPAIGN_NAME = 'Operation Clean Sweep';
 

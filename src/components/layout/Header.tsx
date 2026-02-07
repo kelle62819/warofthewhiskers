@@ -1,4 +1,6 @@
+import { useState, useRef, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAdmin } from '../../contexts/AdminContext';
 
 const navLinks = [
   { to: '/', label: 'Dashboard' },
@@ -9,6 +11,36 @@ const navLinks = [
 ];
 
 export default function Header({ eliminationCount }: { eliminationCount: number }) {
+  const { isAdmin, unlock, lock } = useAdmin();
+  const [showInput, setShowInput] = useState(false);
+  const [code, setCode] = useState('');
+  const [shakeError, setShakeError] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (showInput) inputRef.current?.focus();
+  }, [showInput]);
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (unlock(code)) {
+      setShowInput(false);
+      setCode('');
+    } else {
+      setShakeError(true);
+      setCode('');
+      setTimeout(() => setShakeError(false), 500);
+    }
+  }
+
+  function handleLockClick() {
+    if (isAdmin) {
+      lock();
+    } else {
+      setShowInput(!showInput);
+    }
+  }
+
   return (
     <header className="bg-war-surface border-b border-war-border">
       <div className="max-w-6xl mx-auto px-4 py-3">
@@ -24,10 +56,40 @@ export default function Header({ eliminationCount }: { eliminationCount: number 
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <div className="font-[family-name:var(--font-mono)] text-war-amber text-sm border border-war-amber/30 px-3 py-1 rounded">
               KILLS: {eliminationCount}
             </div>
+            <button
+              onClick={handleLockClick}
+              className="text-lg hover:opacity-80 transition-opacity"
+              title={isAdmin ? 'Lock admin mode' : 'Unlock admin mode'}
+            >
+              {isAdmin ? '\u{1F513}' : '\u{1F512}'}
+            </button>
+            {showInput && !isAdmin && (
+              <form
+                onSubmit={handleSubmit}
+                className={`flex items-center gap-1 ${shakeError ? 'animate-shake' : ''}`}
+              >
+                <input
+                  ref={inputRef}
+                  type="password"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  placeholder="Passcode"
+                  className={`bg-war-surface-light border rounded px-2 py-1 text-xs text-war-text w-24 outline-none ${
+                    shakeError ? 'border-war-red' : 'border-war-border focus:border-war-amber'
+                  }`}
+                />
+                <button
+                  type="submit"
+                  className="bg-war-amber/20 hover:bg-war-amber/30 text-war-amber px-2 py-1 rounded text-xs font-semibold transition-colors"
+                >
+                  Go
+                </button>
+              </form>
+            )}
           </div>
         </div>
         <nav className="flex gap-1 mt-3 overflow-x-auto">
