@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+@theme {
+  /* War room dark palette */
+  --color-war-bg: #0e0e0e;
+  --color-war-surface: #1a1a1a;
+  --color-war-surface-light: #252525;
+  --color-war-border: #333333;
+  --color-war-text: #e5e5e5;
+  --color-war-text-dim: #888888;
+  --color-war-red: #dc2626;
+  --color-war-red-glow: #ef4444;
+  --color-war-amber: #f59e0b;
+  --color-war-amber-glow: #fbbf24;
+  --color-war-green: #22c55e;
+
+  /* Fonts */
+  --font-stencil: 'Black Ops One', cursive;
+  --font-mono: 'Share Tech Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-war-bg);
+  color: var(--color-war-text);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scanline overlay for war-room CRT effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Pulsing red glow animation */
+@keyframes pulse-red {
+  0%, 100% { box-shadow: 0 0 5px rgba(220, 38, 38, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.7); }
+}
+
+@keyframes pulse-amber {
+  0%, 100% { box-shadow: 0 0 5px rgba(245, 158, 11, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.7); }
+}
+
+.pulse-red {
+  animation: pulse-red 2s ease-in-out infinite;
+}
+
+.pulse-amber {
+  animation: pulse-amber 2s ease-in-out infinite;
+}
+
+/* Counter animation */
+@keyframes count-up {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-count {
+  animation: count-up 0.5s ease-out;
+}
