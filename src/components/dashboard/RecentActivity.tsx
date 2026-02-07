@@ -1,11 +1,13 @@
 import { formatDistanceToNow } from 'date-fns';
+import { Link } from 'react-router-dom';
 import type { Elimination, Post, Trap } from '../../types';
 
 interface ActivityItem {
   id: string;
-  type: 'elimination' | 'post';
+  type: 'elimination' | 'post' | 'trap';
   timestamp: Date;
   text: string;
+  link: string;
 }
 
 export default function RecentActivity({
@@ -25,12 +27,21 @@ export default function RecentActivity({
       type: 'elimination' as const,
       timestamp: e.timestamp,
       text: `Kill confirmed${trapMap.get(e.trapId) ? ` — ${trapMap.get(e.trapId)!.name}` : ''}${e.notes ? ` (${e.notes})` : ''}`,
+      link: '/traps',
     })),
     ...posts.slice(0, 10).map((p) => ({
       id: `p-${p.id}`,
       type: 'post' as const,
       timestamp: p.timestamp,
       text: p.text.length > 80 ? p.text.slice(0, 80) + '...' : p.text,
+      link: '/blog',
+    })),
+    ...traps.slice(0, 10).map((t) => ({
+      id: `t-${t.id}`,
+      type: 'trap' as const,
+      timestamp: t.dateAdded,
+      text: `Trap deployed — ${t.name} (${t.location})`,
+      link: '/traps',
     })),
   ]
     .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
@@ -51,11 +62,11 @@ export default function RecentActivity({
       </h3>
       <div className="space-y-2">
         {items.map((item) => (
-          <div key={item.id} className="flex items-start gap-3 py-1.5">
+          <Link key={item.id} to={item.link} className="flex items-start gap-3 py-1.5 rounded px-1 -mx-1 hover:bg-war-surface-light transition-colors">
             <span className="text-sm mt-0.5">
               {item.type === 'elimination' ? (
                 <img src="/mouse-icon.png" alt="" className="w-5 h-5 inline-block" />
-              ) : '\u270D'}
+              ) : item.type === 'trap' ? '\u{1FAA4}' : '\u270D'}
             </span>
             <div className="flex-1 min-w-0">
               <p className="text-sm text-war-text truncate">{item.text}</p>
@@ -63,7 +74,7 @@ export default function RecentActivity({
                 {formatDistanceToNow(item.timestamp, { addSuffix: true })}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

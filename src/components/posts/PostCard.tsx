@@ -5,25 +5,21 @@ import { deletePost } from '../../services/posts';
 
 export default function PostCard({ post }: { post: Post }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [expanded, setExpanded] = useState(false);
 
   async function handleDelete() {
     await deletePost(post.id, post.imagePath);
   }
 
   return (
-    <div className="bg-war-surface border border-war-border rounded-lg overflow-hidden">
+    <div className="bg-war-surface border border-war-border rounded-lg overflow-hidden sm:flex">
       {post.imageUrl && (
         <img
           src={post.imageUrl}
           alt=""
-          className={`w-full object-cover cursor-pointer transition-all ${
-            expanded ? 'max-h-none' : 'max-h-64'
-          }`}
-          onClick={() => setExpanded(!expanded)}
+          className="w-full sm:w-48 sm:h-auto object-cover sm:shrink-0"
         />
       )}
-      <div className="p-4">
+      <div className="p-4 flex-1 min-w-0">
         <p className="text-war-text text-sm whitespace-pre-wrap">{post.text}</p>
         <div className="flex items-center justify-between mt-3">
           <span className="text-war-text-dim text-xs">
