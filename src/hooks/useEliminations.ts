@@ -17,6 +17,9 @@ export function useEliminations() {
       })) as Elimination[];
       setEliminations(data);
       setLoading(false);
+    }, (err) => {
+      console.error('useEliminations error:', err);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);

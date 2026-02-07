@@ -17,6 +17,9 @@ export function usePosts() {
       })) as Post[];
       setPosts(data);
       setLoading(false);
+    }, (err) => {
+      console.error('usePosts error:', err);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);

@@ -17,6 +17,9 @@ export function useTraps() {
       })) as Trap[];
       setTraps(data);
       setLoading(false);
+    }, (err) => {
+      console.error('useTraps error:', err);
+      setLoading(false);
     });
     return () => unsubscribe();
   }, []);
